@@ -5,14 +5,20 @@ import json
 from urllib.parse import urlparse
 from urllib.parse import quote_plus
 from bs4 import BeautifulSoup
+import os, hashlib
+
+CACHE_DIR = os.path.expanduser("~/.go2web_cache")
+os.makedirs(CACHE_DIR, exist_ok=True)
 
 def strip_html(html: str) -> str:
     """Strip HTML tags to produce plain text."""
     soup = BeautifulSoup(html, "html.parser")
     return soup.get_text(separator="\n", strip=True)
  
-def fetch_http(url):
+def fetch_http(url, accept="*/*"):
     """Perform a basic HTTP GET request over sockets."""
+    key = hashlib.sha256(f"{url}|{accept}".encode()).hexdigest()
+    cache_file = os.path.join(CACHE_DIR, key + ".json")
     parsed = urlparse(url)
     host = parsed.netloc
     port = 443 if parsed.scheme == "https" else 80
