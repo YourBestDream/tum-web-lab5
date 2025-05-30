@@ -33,11 +33,19 @@ def main():
         description="Simple HTTP client CLI"
     )
     parser.add_argument(
+        "-u", metavar="URL", dest="url",
+        help="URL to GET"
+    )
+    parser.add_argument(
         "-h", "--help",
         action="help",
         help="show this help message and exit"
     )
+    args = parser.parse_args()
     parser.parse_args()
+    if args.url:
+        hdr, body = fetch_http(args.url)
+        print(body.decode("utf-8", errors="ignore"))
 
 if __name__ == "__main__":
     main()
