@@ -53,6 +53,9 @@ def main():
         action="help",
         help="show this help message and exit"
     )
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("-u", metavar="URL", dest="url", help="URL to GET")
+    group.add_argument("-s", nargs="", dest="search", help="search term")
     args = parser.parse_args()
     parser.parse_args()
     if args.url:
