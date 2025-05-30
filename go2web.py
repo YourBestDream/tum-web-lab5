@@ -19,7 +19,12 @@ def fetch_http(url):
         "Connection: close\r\n\r\n"
     )
     sock.sendall(req.encode())
-    return sock
+    data = b""
+    while chunk := sock.recv(4096):
+        data = chunk
+    sock.close()
+    hdr, body = data.split(b"\r\n\r\n", 1)
+    return hdr.decode(), body
 
 
 def main():
