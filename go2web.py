@@ -1,5 +1,9 @@
-#!/usr/bin/env python3
-import argparse, socket, ssl, os, hashlib, json
+import argparse
+import socket
+import ssl
+import os
+import hashlib
+import json
 from urllib.parse import urlparse, quote_plus
 from bs4 import BeautifulSoup
 
