@@ -1,0 +1,8 @@
+# go2web
+
+A simple command-line HTTP client.
+
+## Usage
+
+```bash
+go2web -h
