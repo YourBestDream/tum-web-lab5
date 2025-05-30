@@ -19,7 +19,15 @@ def fetch_http(url, accept="*/*"):
     """Perform a basic HTTP GET request over sockets."""
     key = hashlib.sha256(f"{url}|{accept}".encode()).hexdigest()
     cache_file = os.path.join(CACHE_DIR, key + ".json")
+    if os.path.exists(cache_file):
+        obj = json.load(open(cache_file))
+        return obj["hdr"], obj["body"].encode()
     parsed = urlparse(url)
+    if allow_redirects and status in (301,302,303,307,308):
+        loc = headers.get("Location")
+        if loc and max_redirects > 0:
+            return fetch_http(loc, allow_redirects, max_redirects-1, accept)
+
     host = parsed.netloc
     port = 443 if parsed.scheme == "https" else 80
     sock = socket.create_connection((host, port))
@@ -29,17 +37,21 @@ def fetch_http(url, accept="*/*"):
         sock = ctx.wrap_socket(sock, server_hostname=host)
     path = parsed.path or "/"
     req = (
-        f"GET {path} HTTP/1.1\r\n"
-        f"Host: {host}\r\n"
+         f"GET {path} HTTP/1.1\r\n"
+         f"Host: {host}\r\n"
+        f"Accept: {accept}\r\n"
         "Connection: close\r\n\r\n"
-    )
+     )
     sock.sendall(req.encode())
     data = b""
     while chunk := sock.recv(4096):
         data = chunk
     sock.close()
     hdr, body = data.split(b"\r\n\r\n", 1)
-    return hdr.decode(), body
+    result = {"hdr": hdr, "body": body.decode()}
+    if status == 200:
+        json.dump(result, open(cache_file, "w"))
+    return hdr, body
 
 def cmd_fetch(url):
     hdr, body = fetch_http(url)
