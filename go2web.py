@@ -1,6 +1,8 @@
 import argparse
 import socket
 from urllib.parse import urlparse
+from urllib.parse import quote_plus
+from bs4 import BeautifulSoup
 
 def fetch_http(url):
     """Perform a basic HTTP GET request over sockets."""
@@ -26,6 +28,16 @@ def fetch_http(url):
     hdr, body = data.split(b"\r\n\r\n", 1)
     return hdr.decode(), body
 
+def cmd_search(term):
+    """Stub for search command."""
+    q = quote_plus(term)
+    url = f"https://duckduckgo.com/html/?q={q}"
+    hdr, body = fetch_http(url)
+    html = body.decode("utf-8", errors="ignore")
+    soup = BeautifulSoup(html, "html.parser")
+    results = soup.select("a.result__a")[:10]
+    for i, a in enumerate(results, 1):
+        print(f"{i}. {a.get_text()}\n   {a['href']}")
 
 def main():
     parser = argparse.ArgumentParser(
@@ -41,6 +53,9 @@ def main():
         action="help",
         help="show this help message and exit"
     )
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("-u", metavar="URL", dest="url", help="URL to GET")
+    group.add_argument("-s", nargs="", dest="search", help="search term")
     args = parser.parse_args()
     parser.parse_args()
     if args.url:
