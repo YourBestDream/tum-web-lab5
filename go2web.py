@@ -10,7 +10,7 @@ def strip_html(html: str) -> str:
     """Strip HTML tags to produce plain text."""
     soup = BeautifulSoup(html, "html.parser")
     return soup.get_text(separator="\n", strip=True)
-
+ 
 def fetch_http(url):
     """Perform a basic HTTP GET request over sockets."""
     parsed = urlparse(url)
