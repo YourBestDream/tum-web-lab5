@@ -1,4 +1,11 @@
 import argparse
+import socket
+from urllib.parse import urlparse
+
+def fetch_http(url):
+    """Perform a basic HTTP GET request over sockets."""
+    pass
+
 
 def main():
     parser = argparse.ArgumentParser(
