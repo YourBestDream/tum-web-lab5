@@ -1,6 +1,7 @@
 import argparse
 import socket
 from urllib.parse import urlparse
+from urllib.parse import quote_plus
 
 def fetch_http(url):
     """Perform a basic HTTP GET request over sockets."""
@@ -26,6 +27,10 @@ def fetch_http(url):
     hdr, body = data.split(b"\r\n\r\n", 1)
     return hdr.decode(), body
 
+def cmd_search(term):
+    """Stub for search command."""
+    q = quote_plus(term)
+    url = f"https://duckduckgo.com/html/?q={q}"
 
 def main():
     parser = argparse.ArgumentParser(
