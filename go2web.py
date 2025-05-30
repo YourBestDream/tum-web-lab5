@@ -31,6 +31,8 @@ def cmd_search(term):
     """Stub for search command."""
     q = quote_plus(term)
     url = f"https://duckduckgo.com/html/?q={q}"
+    hdr, body = fetch_http(url)
+    html = body.decode("utf-8", errors="ignore")
 
 def main():
     parser = argparse.ArgumentParser(
