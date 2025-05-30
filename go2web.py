@@ -1,4 +1,31 @@
 import argparse
+import socket
+from urllib.parse import urlparse
+
+def fetch_http(url):
+    """Perform a basic HTTP GET request over sockets."""
+    parsed = urlparse(url)
+    host = parsed.netloc
+    port = 443 if parsed.scheme == "https" else 80
+    sock = socket.create_connection((host, port))
+    if parsed.scheme == "https":
+        import ssl
+        ctx = ssl.create_default_context()
+        sock = ctx.wrap_socket(sock, server_hostname=host)
+    path = parsed.path or "/"
+    req = (
+        f"GET {path} HTTP/1.1\r\n"
+        f"Host: {host}\r\n"
+        "Connection: close\r\n\r\n"
+    )
+    sock.sendall(req.encode())
+    data = b""
+    while chunk := sock.recv(4096):
+        data = chunk
+    sock.close()
+    hdr, body = data.split(b"\r\n\r\n", 1)
+    return hdr.decode(), body
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -6,11 +33,19 @@ def main():
         description="Simple HTTP client CLI"
     )
     parser.add_argument(
+        "-u", metavar="URL", dest="url",
+        help="URL to GET"
+    )
+    parser.add_argument(
         "-h", "--help",
         action="help",
         help="show this help message and exit"
     )
+    args = parser.parse_args()
     parser.parse_args()
+    if args.url:
+        hdr, body = fetch_http(args.url)
+        print(body.decode("utf-8", errors="ignore"))
 
 if __name__ == "__main__":
     main()
