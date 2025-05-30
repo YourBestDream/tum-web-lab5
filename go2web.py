@@ -35,6 +35,15 @@ def fetch_http(url):
     hdr, body = data.split(b"\r\n\r\n", 1)
     return hdr.decode(), body
 
+def cmd_fetch(url):
+    hdr, body = fetch_http(url)
+    content = body.decode("utf-8", errors="ignore")
+    try:
+        obj = json.loads(content)
+        print(json.dumps(obj, indent=2))
+    except json.JSONDecodeError:
+        print(strip_html(content))
+
 def cmd_search(term):
     """Stub for search command."""
     q = quote_plus(term)
