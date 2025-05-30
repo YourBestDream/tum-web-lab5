@@ -3,7 +3,7 @@ import argparse, socket, ssl, os, hashlib, json
 from urllib.parse import urlparse, quote_plus
 from bs4 import BeautifulSoup
 
-CACHE_DIR = os.path.expanduser("~/.go2web_cache")
+CACHE_DIR = os.path.expanduser("./.go2web_cache")
 os.makedirs(CACHE_DIR, exist_ok=True)
 
 def fetch_http(raw_url, allow_redirects=True, max_redirects=3, accept="*/*"):
