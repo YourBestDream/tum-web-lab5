@@ -6,3 +6,10 @@ A simple command-line HTTP client.
 
 ```bash
 go2web -h
+```
+## Features
++- Follows HTTP redirects (301/302/etc.)
++- Caches 200 OK responses under `~/.go2web_cache`
++- Honors `Accept` header for JSON vs HTML
+ ...
+![demo](demo.gif)
