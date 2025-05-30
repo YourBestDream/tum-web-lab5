@@ -12,6 +12,13 @@ def fetch_http(url):
         import ssl
         ctx = ssl.create_default_context()
         sock = ctx.wrap_socket(sock, server_hostname=host)
+    path = parsed.path or "/"
+    req = (
+        f"GET {path} HTTP/1.1\r\n"
+        f"Host: {host}\r\n"
+        "Connection: close\r\n\r\n"
+    )
+    sock.sendall(req.encode())
     return sock
 
 
